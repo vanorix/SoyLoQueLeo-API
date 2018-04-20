@@ -9,6 +9,41 @@ var fileUpload = require('express-fileupload');
 var app = express(); // define our app using express
 var bodyParser = require('body-parser');
 var fs = require('fs');
+var base64Img = require('base64-img');
+//Database connection
+var mysql = require('mysql');
+
+var con = mysql.createConnection({
+	host: "localhost",
+	user: "soyloqueleo",
+	password: "GtWxw<m2*k3zg`Re",
+	database: "soyloqueleo"
+});
+
+// ==============================================================================
+// con.connect(function(err){
+// 	if(err){
+// 		var new_con = mysql.createConnection({
+// 			host: "localhost",
+// 			user: "soyloqueleo",
+// 			password: "GtWxw<m2*k3zg`Re"
+// 		});
+// 		new_con.connect(function(err){
+// 			con.query("CREATE DATABASE soyloqueleo", function(err, result){
+// 				if(err) {
+// 					console.log(err);
+// 					return 0;
+// 				}
+// 				console.log(result);
+// 				con = new_con;
+// 			});
+// 		});
+// 	}
+// });
+
+// con.query("CREATE TABLE uploaded_images IF NOT EXIST(id int primary key auto_increment, )")
+
+// ==============================================================================
 
 app.use(fileUpload());
 
@@ -28,7 +63,7 @@ var router = express.Router(); // get an instance of the express Router
 var serverURL = 'https://1fb96d42.ngrok.io/upload/';
 
 // HANDLING INCOMING IMAGE
-//***************************************************************************
+// =============================================================================
 var guid = function() {
 	function s4() {
 		return Math.floor((1 + Math.random()) * 0x10000)
@@ -42,7 +77,7 @@ var saveImage = function(imageData) {
 
 
 }
-//***************************************************************************
+// ==============================================================================
 
 // middleware to use for all requests
 router.use(function(req, res, next) {
@@ -57,14 +92,17 @@ router.use(function(req, res, next) {
 router.post('/save', function(req, res) {
 	console.log(req.body.img_data);
 	var data = new Buffer(req.body.img_data, 'base64');
-	var filename = guid() + '.png';
-	var filePath = __dirname + '/uploads/' + filename;
-	fs.writeFile(filePath, data, 'base64', function(err) {
-		if (err) return res.json({error: err.message});
-		res.json({
-			url: data
-		});
+	var filename = guid();
+	var filePath = __dirname + '/uploads';
+	base64Img.img(req.body.img_data, filePath, filename, function(err, filePath){
+		res.json({url: filePath + filename});
 	});
+	// fs.writeFile(filePath, data, 'base64', function(err) {
+	// 	if (err) return res.json({error: err.message});
+	// 	res.json({
+	// 		url: data
+	// 	});
+	// });
 });
 
 // more routes for our API will happen here
