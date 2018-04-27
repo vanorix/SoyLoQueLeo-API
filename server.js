@@ -60,7 +60,7 @@ var port = process.env.PORT || 8080; // set our port
 // ROUTES FOR OUR API
 // =============================================================================
 var router = express.Router(); // get an instance of the express Router
-var serverURL = 'https://563a42be.ngrok.io/upload/';
+var serverURL = 'https://96a06f2d.ngrok.io/upload/';
 
 // HANDLING INCOMING IMAGE
 // =============================================================================
@@ -96,7 +96,7 @@ router.post('/save', function(req, res) {
 	var filePath = __dirname + '/uploads';
 	base64Img.img(req.body.img_data, filePath, filename, function(err, filePath){
 		console.log("Last uploaded: " + filename);
-		res.json({url: serverURL + filename});
+		res.json({url: serverURL + filename + ".png"});
 	});
 	// fs.writeFile(filePath, data, 'base64', function(err) {
 	// 	if (err) return res.json({error: err.message});
